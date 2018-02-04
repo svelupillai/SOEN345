@@ -133,8 +133,7 @@
           </execution>
         </executions>
       </plugin>
-  <reporting>
-    <plugins>
+
       <!-- integrate maven-cobertura-plugin to project site -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -147,8 +146,6 @@
           <check />
         </configuration>
       </plugin>
-    </plugins>
-  </reporting>
 
       <!-- Spring Boot Actuator displays build-related information if a git.properties
         file is present at the classpath -->
