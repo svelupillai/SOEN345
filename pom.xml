@@ -229,6 +229,10 @@
 					<goal>analyze-only</goal>
 				</goals>
 				<configuration>
+					    <ignoredDependencies>
+                            <ignoredDependency>org.springframework.boot:spring-boot-starter-actuator:jar:2.0.0.BUILD-SNAPSHOT:compile</ignoredDependency>
+							<ignoredDependency>org.springframework.boot:spring-boot-starter-cache:jar:2.0.0.BUILD-SNAPSHOT:compile</ignoredDependency>
+                        </ignoredDependencies>
 					<failOnWarning>true</failOnWarning>
 					<outputXML>true</outputXML>
 				</configuration>
