@@ -15,7 +15,7 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import javax.persistence.MappedSuperclass;
+
 
 
 /**
@@ -23,7 +23,7 @@ import javax.persistence.MappedSuperclass;
  *
  * @author Ken Krebs
  */
-@MappedSuperclass
+
 public interface Person extends BaseEntity {
 
     public String getFirstName();

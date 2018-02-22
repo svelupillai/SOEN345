@@ -64,7 +64,7 @@ public class ClinicServiceTests {
 
     @Test
     public void shouldFindOwnersByLastName() {
-        Collection<Person> owners = this.owners.findByLastName("Davis");
+        Collection<Owner> owners = this.owners.findByLastName("Davis");
         assertThat(owners.size()).isEqualTo(2);
 
         owners = this.owners.findByLastName("Daviss");
@@ -73,7 +73,7 @@ public class ClinicServiceTests {
 
     @Test
     public void shouldFindSingleOwnerWithPet() {
-        FakeOwner owner = (FakeOwner) this.owners.findById(1);
+        Owner owner = (Owner) this.owners.findById(1);
         assertThat(owner.getLastName()).startsWith("Franklin");
         assertThat(owner.getPets().size()).isEqualTo(1);
         assertThat(owner.getPets().get(0).getType()).isNotNull();
@@ -83,10 +83,10 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldInsertOwner() {
-        Collection<Person> owners = this.owners.findByLastName("Schultz");
+        Collection<Owner> owners = this.owners.findByLastName("Schultz");
         int found = owners.size();
 
-        FakeOwner owner = new FakeOwner();
+        Owner owner = new Owner();
         owner.setFirstName("Sam");
         owner.setLastName("Schultz");
         owner.setAddress("4, Evans Street");
@@ -102,15 +102,15 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldUpdateOwner() {
-        Person owner = this.owners.findById(1);
+        Owner owner = (Owner) this.owners.findById(1);
         String oldLastName = owner.getLastName();
         String newLastName = oldLastName + "X";
 
         owner.setLastName(newLastName);
-        this.owners.save(owner);
+        this.owners.save((Owner) owner);
 
         // retrieving new name from database
-        owner = this.owners.findById(1);
+        owner = (Owner) this.owners.findById(1);
         assertThat(owner.getLastName()).isEqualTo(newLastName);
     }
 
@@ -135,7 +135,7 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldInsertPetIntoDatabaseAndGenerateId() {
-        FakeOwner owner6 = (FakeOwner) this.owners.findById(6);
+        Owner owner6 = (Owner) this.owners.findById(6);
         int found = owner6.getPets().size();
 
         Pet pet = new Pet();
@@ -149,7 +149,7 @@ public class ClinicServiceTests {
         this.pets.save(pet);
         this.owners.save(owner6);
 
-        owner6 = (FakeOwner) this.owners.findById(6);
+        owner6 = (Owner) this.owners.findById(6);
         assertThat(owner6.getPets().size()).isEqualTo(found + 1);
         // checks that id has been generated
         assertThat(pet.getId()).isNotNull();
@@ -172,7 +172,7 @@ public class ClinicServiceTests {
     @Test
     public void shouldFindVets() {
         Collection<Vet> vets = this.vets.findAll();
-
+        System.out.println(vets);
         Vet vet = EntityUtils.getById(vets, Vet.class, 3);
         assertThat(vet.getLastName()).isEqualTo("Douglas");
         assertThat(vet.getNrOfSpecialties()).isEqualTo(2);

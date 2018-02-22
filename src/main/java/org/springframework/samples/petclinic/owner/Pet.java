@@ -52,7 +52,12 @@ import org.springframework.samples.petclinic.visit.Visit;
 @Table(name = "pets")
 public class Pet extends NamedEntity {
 
-    @Column(name = "birth_date")
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2954571558128046905L;
+
+	@Column(name = "birth_date")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
@@ -63,7 +68,7 @@ public class Pet extends NamedEntity {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private Person owner;
+    private Owner owner;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "petId", fetch = FetchType.EAGER)
     private Set<Visit> visits = new LinkedHashSet<>();
@@ -89,7 +94,7 @@ public class Pet extends NamedEntity {
     }
 
     protected void setOwner(Person owner) {
-        this.owner = owner;
+        this.owner = (Owner) owner;
     }
 
     protected Set<Visit> getVisitsInternal() {

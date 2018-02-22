@@ -40,6 +40,11 @@ import org.springframework.samples.petclinic.model.BaseEntity;
 @Table(name = "visits")
 public class Visit implements BaseEntity {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6941144575016219682L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
