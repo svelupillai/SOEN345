@@ -21,12 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.springframework.beans.support.MutableSortDefinition;
@@ -43,7 +48,19 @@ import org.springframework.samples.petclinic.model.Person;
  */
 @Entity
 @Table(name = "vets")
-public class Vet extends Person {
+public class Vet implements Person {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
+	@Column(name = "first_name")
+    @NotEmpty
+    private String firstName;
+	
+	@Column(name = "last_name")
+    @NotEmpty
+    private String lastName;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
@@ -75,5 +92,50 @@ public class Vet extends Person {
     public void addSpecialty(Specialty specialty) {
         getSpecialtiesInternal().add(specialty);
     }
+
+	@Override
+	public Integer getId() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		// TODO Auto-generated method stub
+		this.id = id;
+		
+	}
+
+	@Override
+	public boolean isNew() {
+		// TODO Auto-generated method stub
+		return this.id == null;
+	}
+
+	@Override
+	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return this.firstName;
+	}
+
+	@Override
+	public void setFirstName(String firstName) {
+		// TODO Auto-generated method stub
+		this.firstName = firstName;
+		
+	}
+
+	@Override
+	public String getLastName() {
+		// TODO Auto-generated method stub
+		return this.lastName;
+	}
+
+	@Override
+	public void setLastName(String lastName) {
+		// TODO Auto-generated method stub
+		this.lastName = lastName;
+		
+	}
 
 }

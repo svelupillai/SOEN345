@@ -24,6 +24,9 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
@@ -44,8 +47,26 @@ import org.springframework.samples.petclinic.model.Person;
  */
 @Entity
 @Table(name = "owners")
-public class Owner extends Person {
-    @Column(name = "address")
+public class Owner implements Person {
+    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8874904418974309050L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
+	@Column(name = "first_name")
+    @NotEmpty
+    private String firstName;
+	
+	@Column(name = "last_name")
+    @NotEmpty
+    private String lastName;
+	
+	@Column(name = "address")
     @NotEmpty
     private String address;
 
@@ -149,4 +170,47 @@ public class Owner extends Person {
                 .append("firstName", this.getFirstName()).append("address", this.address)
                 .append("city", this.city).append("telephone", this.telephone).toString();
     }
+
+	@Override
+	public Integer getId() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+		
+	}
+
+	@Override
+	public boolean isNew() {
+		// TODO Auto-generated method stub
+		return this.id == null;
+	}
+
+	@Override
+	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return this.firstName;
+	}
+
+	@Override
+	public void setFirstName(String firstName) {
+		// TODO Auto-generated method stub
+		this.firstName = firstName;
+	}
+
+	@Override
+	public String getLastName() {
+		// TODO Auto-generated method stub
+		return this.lastName;
+	}
+
+	@Override
+	public void setLastName(String lastName) {
+		// TODO Auto-generated method stub
+		this.lastName = lastName;
+		
+	}
 }
