@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.samples.petclinic.model.Person;
+import org.springframework.samples.petclinic.owner.FakeOwner;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerRepository;
 import org.springframework.samples.petclinic.owner.Pet;
@@ -62,7 +64,7 @@ public class ClinicServiceTests {
 
     @Test
     public void shouldFindOwnersByLastName() {
-        Collection<Owner> owners = this.owners.findByLastName("Davis");
+        Collection<Person> owners = this.owners.findByLastName("Davis");
         assertThat(owners.size()).isEqualTo(2);
 
         owners = this.owners.findByLastName("Daviss");
@@ -71,7 +73,7 @@ public class ClinicServiceTests {
 
     @Test
     public void shouldFindSingleOwnerWithPet() {
-        Owner owner = this.owners.findById(1);
+        FakeOwner owner = (FakeOwner) this.owners.findById(1);
         assertThat(owner.getLastName()).startsWith("Franklin");
         assertThat(owner.getPets().size()).isEqualTo(1);
         assertThat(owner.getPets().get(0).getType()).isNotNull();
@@ -81,10 +83,10 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldInsertOwner() {
-        Collection<Owner> owners = this.owners.findByLastName("Schultz");
+        Collection<Person> owners = this.owners.findByLastName("Schultz");
         int found = owners.size();
 
-        Owner owner = new Owner();
+        FakeOwner owner = new FakeOwner();
         owner.setFirstName("Sam");
         owner.setLastName("Schultz");
         owner.setAddress("4, Evans Street");
@@ -100,7 +102,7 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldUpdateOwner() {
-        Owner owner = this.owners.findById(1);
+        Person owner = this.owners.findById(1);
         String oldLastName = owner.getLastName();
         String newLastName = oldLastName + "X";
 
@@ -133,7 +135,7 @@ public class ClinicServiceTests {
     @Test
     @Transactional
     public void shouldInsertPetIntoDatabaseAndGenerateId() {
-        Owner owner6 = this.owners.findById(6);
+        FakeOwner owner6 = (FakeOwner) this.owners.findById(6);
         int found = owner6.getPets().size();
 
         Pet pet = new Pet();
@@ -147,7 +149,7 @@ public class ClinicServiceTests {
         this.pets.save(pet);
         this.owners.save(owner6);
 
-        owner6 = this.owners.findById(6);
+        owner6 = (FakeOwner) this.owners.findById(6);
         assertThat(owner6.getPets().size()).isEqualTo(found + 1);
         // checks that id has been generated
         assertThat(pet.getId()).isNotNull();
