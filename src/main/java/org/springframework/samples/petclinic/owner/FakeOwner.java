@@ -25,6 +25,11 @@ import org.springframework.samples.petclinic.model.Person;
 
 public class FakeOwner implements Person{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1566065605019543136L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

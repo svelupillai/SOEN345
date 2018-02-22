@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Sam Brannen
  * @author Michael Isvy
  */
-public interface OwnerRepository extends Repository<Person, Integer> {
+public interface OwnerRepository extends Repository<Owner, Integer> {
 
     /**
      * Retrieve {@link Owner}s from the data store by last name, returning all owners
@@ -43,7 +43,7 @@ public interface OwnerRepository extends Repository<Person, Integer> {
      */
     @Query("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName%")
     @Transactional(readOnly = true)
-    Collection<Person> findByLastName(@Param("lastName") String lastName);
+    Collection<Owner> findByLastName(@Param("lastName") String lastName);
 
     /**
      * Retrieve an {@link Owner} from the data store by id.
@@ -58,7 +58,7 @@ public interface OwnerRepository extends Repository<Person, Integer> {
      * Save an {@link Owner} to the data store, either inserting or updating it.
      * @param owner the {@link Owner} to save
      */
-    void save(Person owner);
+    void save(Owner owner);
 
 
 }

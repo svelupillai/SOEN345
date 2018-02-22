@@ -50,6 +50,11 @@ import org.springframework.samples.petclinic.model.Person;
 @Table(name = "vets")
 public class Vet implements Person {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -938631121371411124L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
