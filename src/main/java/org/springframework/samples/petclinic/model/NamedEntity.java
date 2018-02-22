@@ -16,6 +16,8 @@
 package org.springframework.samples.petclinic.model;
 
 import javax.persistence.Column;
+import javax.persistence.*;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 
@@ -27,8 +29,19 @@ import javax.persistence.MappedSuperclass;
  * @author Juergen Hoeller
  */
 @MappedSuperclass
-public class NamedEntity extends BaseEntity {
+public class NamedEntity implements BaseEntity {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3303001383091756992L;
 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
+	
     @Column(name = "name")
     private String name;
 
@@ -44,5 +57,22 @@ public class NamedEntity extends BaseEntity {
     public String toString() {
         return this.getName();
     }
+
+	@Override
+	public Integer getId() {
+		return this.id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+		
+	}
+
+	@Override
+	public boolean isNew() {
+		// TODO Auto-generated method stub
+		return this.id == null;
+	}
 
 }
