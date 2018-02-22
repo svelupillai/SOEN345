@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -61,7 +63,7 @@ class OwnerController {
     }
 
     @PostMapping("/owners/new")
-    public String processCreationForm(@Valid Owner owner, BindingResult result) {
+    public String processCreationForm(@Valid Person owner, BindingResult result) {
         if (result.hasErrors()) {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         } else {
@@ -77,7 +79,7 @@ class OwnerController {
     }
 
     @GetMapping("/owners")
-    public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
+    public String processFindForm(Person owner, BindingResult result, Map<String, Object> model) {
 
         // allow parameterless GET request for /owners to return all records
         if (owner.getLastName() == null) {
@@ -85,7 +87,7 @@ class OwnerController {
         }
 
         // find owners by last name
-        Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+        Collection<Person> results = this.owners.findByLastName(owner.getLastName());
         if (results.isEmpty()) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");
@@ -103,13 +105,13 @@ class OwnerController {
 
     @GetMapping("/owners/{ownerId}/edit")
     public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) {
-        Owner owner = this.owners.findById(ownerId);
+        Person owner = this.owners.findById(ownerId);
         model.addAttribute(owner);
         return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
 
     @PostMapping("/owners/{ownerId}/edit")
-    public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") int ownerId) {
+    public String processUpdateOwnerForm(@Valid Person owner, BindingResult result, @PathVariable("ownerId") int ownerId) {
         if (result.hasErrors()) {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         } else {

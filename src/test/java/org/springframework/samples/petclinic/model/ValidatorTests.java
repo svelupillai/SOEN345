@@ -7,8 +7,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.junit.Test;
-
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.samples.petclinic.owner.FakeOwner;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -30,16 +30,19 @@ public class ValidatorTests {
     public void shouldNotValidateWhenFirstNameEmpty() {
 
         LocaleContextHolder.setLocale(Locale.ENGLISH);
-        Person person = new Owner();
+        FakeOwner person = new FakeOwner();
         person.setFirstName("");
         person.setLastName("smith");
-
+        person.setAddress("test");
+        person.setCity("test");
+        person.setTelephone("1234567890");
+        
         Validator validator = createValidator();
-        Set<ConstraintViolation<Person>> constraintViolations = validator
+        Set<ConstraintViolation<FakeOwner>> constraintViolations = validator
                 .validate(person);
-
+        System.out.print(constraintViolations);
         assertThat(constraintViolations.size()).isEqualTo(1);
-        ConstraintViolation<Person> violation = constraintViolations.iterator().next();
+        ConstraintViolation<FakeOwner> violation = constraintViolations.iterator().next();
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getMessage()).isEqualTo("must not be empty");
     }

@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.Collection;
 
 /**
@@ -51,7 +53,7 @@ class PetController {
     }
 
     @ModelAttribute("owner")
-    public Owner findOwner(@PathVariable("ownerId") int ownerId) {
+    public Person findOwner(@PathVariable("ownerId") int ownerId) {
         return this.owners.findById(ownerId);
     }
 

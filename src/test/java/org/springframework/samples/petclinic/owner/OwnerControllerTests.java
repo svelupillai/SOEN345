@@ -39,11 +39,11 @@ public class OwnerControllerTests {
     @MockBean
     private OwnerRepository owners;
 
-    private Owner george;
+    private FakeOwner george;
 
     @Before
     public void setup() {
-        george = new Owner();
+        george = new FakeOwner();
         george.setId(TEST_OWNER_ID);
         george.setFirstName("George");
         george.setLastName("Franklin");
@@ -97,7 +97,7 @@ public class OwnerControllerTests {
 
     @Test
     public void testProcessFindFormSuccess() throws Exception {
-        given(this.owners.findByLastName("")).willReturn(Lists.newArrayList(george, new Owner()));
+        given(this.owners.findByLastName("")).willReturn(Lists.newArrayList(george, new FakeOwner()));
         mockMvc.perform(get("/owners"))
             .andExpect(status().isOk())
             .andExpect(view().name("owners/ownersList"));
