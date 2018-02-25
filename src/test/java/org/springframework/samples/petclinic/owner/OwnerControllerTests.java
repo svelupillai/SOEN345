@@ -2,12 +2,19 @@ package org.springframework.samples.petclinic.owner;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -51,6 +58,7 @@ public class OwnerControllerTests {
         george.setCity("Madison");
         george.setTelephone("6085551023");
         given(this.owners.findById(TEST_OWNER_ID)).willReturn(george);
+        
     }
 
     @Test
@@ -174,6 +182,30 @@ public class OwnerControllerTests {
             .andExpect(model().attribute("owner", hasProperty("city", is("Madison"))))
             .andExpect(model().attribute("owner", hasProperty("telephone", is("6085551023"))))
             .andExpect(view().name("owners/ownerDetails"));
+    }
+    
+    @Test
+    public void testGetPet()throws Exception{
+    	Pet cat = new Pet();
+		cat.setBirthDate(new Date());
+		cat.setId(1);
+		cat.setName("Cat");
+		
+		Pet dog = new Pet();
+		dog.setBirthDate(new Date());
+		dog.setId(1);
+		dog.setName("Dog");
+		
+		List<Pet> petList = new ArrayList<Pet>() {{add(cat); add(dog);}};
+		Set<Pet> petSet = new HashSet<Pet>() {{add(cat); add(dog);}};
+		
+		george.setPetsInternal(petSet);
+		
+		assertEquals(george.getPet("Cat"), cat);
+		assertEquals(george.getPet("Dog"), dog);
+		assertEquals(george.getPets(), petList);
+		assertEquals(george.getPetsInternal(), petSet);
+		
     }
 
 }

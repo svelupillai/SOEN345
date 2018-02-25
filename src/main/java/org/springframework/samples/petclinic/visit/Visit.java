@@ -19,6 +19,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,9 +38,18 @@ import org.springframework.samples.petclinic.model.BaseEntity;
  */
 @Entity
 @Table(name = "visits")
-public class Visit extends BaseEntity {
+public class Visit implements BaseEntity {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6941144575016219682L;
 
-    @Column(name = "visit_date")
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+    
+	@Column(name = "visit_date")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
@@ -79,5 +91,24 @@ public class Visit extends BaseEntity {
     public void setPetId(Integer petId) {
         this.petId = petId;
     }
+
+	@Override
+	public Integer getId() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		// TODO Auto-generated method stub
+		this.id = id;
+		
+	}
+
+	@Override
+	public boolean isNew() {
+		// TODO Auto-generated method stub
+		return this.id == null;
+	}
 
 }

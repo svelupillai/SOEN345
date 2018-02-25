@@ -1,11 +1,18 @@
 package org.springframework.samples.petclinic.owner;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -23,6 +30,7 @@ import org.springframework.samples.petclinic.owner.PetController;
 import org.springframework.samples.petclinic.owner.PetRepository;
 import org.springframework.samples.petclinic.owner.PetType;
 import org.springframework.samples.petclinic.owner.PetTypeFormatter;
+import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -126,4 +134,33 @@ public class PetControllerTests {
             .andExpect(view().name("pets/createOrUpdatePetForm"));
     }
 
+    @Test
+    public void testGetSetVisits() throws Exception{
+    	
+    	Pet dog = new Pet();
+		dog.setBirthDate(new Date());
+		dog.setId(3);
+		dog.setName("Dog");
+		
+    	Visit visit1 = new Visit();
+    	visit1.setDate(new Date());
+    	visit1.setDescription("test");
+    	visit1.setId(123);
+    	visit1.setPetId(3);
+    	
+    	Visit visit2 = new Visit();
+    	visit1.setDate(new Date());
+    	visit1.setDescription("test2");
+    	visit1.setId(124);
+    	visit1.setPetId(3);
+    	
+    	List<Visit> visitList = new ArrayList<Visit>() {{add(visit1); add(visit2);}};
+		Set<Visit> visitSet = new HashSet<Visit>() {{add(visit1); add(visit2);}};
+		
+		dog.setVisitsInternal(visitSet);
+		
+		assertEquals(dog.getVisitsInternal(), visitSet);
+		assertEquals(dog.getVisits(), visitList);
+		
+    }
 }
