@@ -1,7 +1,6 @@
 package org.springframework.samples.petclinic.owner;
 
 import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -10,18 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.assertj.core.util.Arrays;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 public class FakeOwnerTests {
 
