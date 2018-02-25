@@ -38,6 +38,7 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.NamedEntity;
+import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.visit.Visit;
 
 /**
@@ -51,7 +52,12 @@ import org.springframework.samples.petclinic.visit.Visit;
 @Table(name = "pets")
 public class Pet extends NamedEntity {
 
-    @Column(name = "birth_date")
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2954571558128046905L;
+
+	@Column(name = "birth_date")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
@@ -83,12 +89,12 @@ public class Pet extends NamedEntity {
         this.type = type;
     }
 
-    public Owner getOwner() {
+    public Person getOwner() {
         return this.owner;
     }
 
-    protected void setOwner(Owner owner) {
-        this.owner = owner;
+    protected void setOwner(Person owner) {
+        this.owner = (Owner) owner;
     }
 
     protected Set<Visit> getVisitsInternal() {
