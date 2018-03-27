@@ -100,8 +100,6 @@ public class OwnerPostgreSQL {
 
 			index++;
 		}
-
-		System.out.println("\nINCONSISTENCIES: " + inconsistencies);
 	}
 	
 	private void Inconsistency(Object expected, Object actual) {
@@ -110,6 +108,16 @@ public class OwnerPostgreSQL {
 							+ "\n\t Actual: " + actual);
 		
 		inconsistencies++;
+	}
+	
+	public int getInconsistencies() {
+		return inconsistencies;
+	}
+	
+	public void dropTable() throws SQLException {
+		String sqlDropTableQuery = "DROP TABLE Owner;";
+		Statement statement = getConnection().createStatement();
+		statement.executeUpdate(sqlDropTableQuery);
 	}
 
 }
