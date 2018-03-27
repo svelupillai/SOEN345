@@ -62,5 +62,29 @@ public class TestMigration {
 		
 		assertEquals(0, ownerPostgres.getInconsistencies());
 	}
+	
+	@Test
+	public void testInsertInconsistency() throws SQLException {
+		
+		OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
+		ownerPostgres.dropTable();
+		
+		ownerPostgres.forklift(this.owners);
+		
+		// Insert an inconsistency - ensure the consistency checker is working properly
+        Owner person = new Owner();
+        person.setId(3);
+        person.setFirstName("Peson");
+        person.setLastName("Peep");
+        person.setAddress("309 Elm");
+        person.setCity("Westmount");
+        person.setTelephone("5432165995");
+        given(this.owners.findById(3)).willReturn(person);
+        ownersList.add(person);
+        given(this.owners.getAllOwners()).willReturn(ownersList);
+		
+		ownerPostgres.consistencyCheck(this.owners);
+		assertEquals(6, ownerPostgres.getInconsistencies());
+	}
 
 }
