@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,6 +54,11 @@ class OwnerController {
         dataBinder.setDisallowedFields("id");
     }
 
+    public List<Owner> getAllOwners(){
+    	List<Owner> owners = this.owners.getAllOwners();
+    	return owners;
+    }
+    
     @GetMapping("/owners/new")
     public String initCreationForm(Map<String, Object> model) {
         Owner owner = new Owner();

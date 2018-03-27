@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -34,6 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface OwnerRepository extends Repository<Owner, Integer> {
 
+	@Query("SELECT * FROM Owner")
+	@Transactional(readOnly = true)
+	List<Owner> getAllOwners();
+	
     /**
      * Retrieve {@link Owner}s from the data store by last name, returning all owners
      * whose last name <i>starts</i> with the given name.
