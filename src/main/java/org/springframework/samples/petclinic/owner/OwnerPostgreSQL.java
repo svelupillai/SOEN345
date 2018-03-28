@@ -37,8 +37,30 @@ public class OwnerPostgreSQL {
 		}
 	}
 	
-	public void consistencyCheck(OwnerRepository repo) throws SQLException {
+	//adds to DB
+	public void addToDB(Owner owner){
+		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + owner.getId().toString() + ", " 
+				+ "'" + owner.getFirstName() + "', "
+				+ "'" + owner.getLastName() + "', "
+				+ "'" + owner.getAddress() + "', "
+				+ "'" + owner.getCity() + "', "
+				+ "'" + owner.getTelephone().toString()
+				+"');";
 
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(addQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		
+	}
+	
+	public void consistencyCheck(OwnerRepository repo) throws SQLException {
+		
+		inconsistencies = 0;
 		List<Owner> owners = repo.getAllOwners();
 
 		String sqlStatement = "SELECT * FROM Owner;";
@@ -73,30 +95,23 @@ public class OwnerPostgreSQL {
 			}
 
 			Owner owner = owners.get(index);
-			if(owner.getId() != id) {
+			
+			//this owner is not in the postgres db
+			if(id == 0 && firstName == null && lastName ==null &&  address ==null && address == null && city == null && telephone ==null){
 				Inconsistency(owner.getId(), id);
-				//fix inconsistency
-			}
-			if(!(owner.getFirstName().equals(firstName))) {
 				Inconsistency(owner.getFirstName(), firstName);
-				//fix inconsistency
-			}
-			if(!(owner.getLastName().equals(lastName))) {
 				Inconsistency(owner.getLastName(), lastName);
-				//fix inconsistency
-			}
-			if(!(owner.getAddress().equals(address))) {
 				Inconsistency(owner.getAddress(), address);
-				//fix inconsistency
-			}
-			if(!(owner.getCity().equals(city))) {
 				Inconsistency(owner.getCity(), city);
-				//fix inconsistency
-			}
-			if(!(owner.getTelephone().equals(telephone))) {
 				Inconsistency(owner.getTelephone(), telephone);
-				//fix inconsistency
+				addToDB(owner);
 			}
+			
+			//the old db owner and new db owner are inconsistent
+			else {
+			
+			}
+			
 
 			index++;
 		}

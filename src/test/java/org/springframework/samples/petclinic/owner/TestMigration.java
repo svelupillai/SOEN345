@@ -44,7 +44,7 @@ public class TestMigration {
         maddie.setTelephone("5146859221");
         given(this.owners.findById(2)).willReturn(maddie);
         
-        ownersList = new ArrayList<Owner>();
+        ownersList = new PostgresList<Owner>();
         ownersList.add(george);
         ownersList.add(maddie);
         given(this.owners.getAllOwners()).willReturn(ownersList);
@@ -85,6 +85,10 @@ public class TestMigration {
 		
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(6, ownerPostgres.getInconsistencies());
+		
+		//second time around will be 0, since it was fixed before
+		ownerPostgres.consistencyCheck(this.owners);
+		assertEquals(0, ownerPostgres.getInconsistencies());
 	}
 
 }
