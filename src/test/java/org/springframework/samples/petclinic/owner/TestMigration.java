@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +22,12 @@ public class TestMigration {
     @MockBean
     private OwnerRepository owners;
     
-    List<Owner> ownersList;
+    PostgresList<Owner> ownersList;
 
     @Before
-    public void setup() {
+    public void setup() throws SQLException {
+    	OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
+		ownerPostgres.dropTable();
     	
         Owner george = new Owner();
         george.setId(1);
@@ -89,6 +92,28 @@ public class TestMigration {
 		//second time around will be 0, since it was fixed before
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
+		
+		// when an owner that exists is updated, there will be an inconsistency the first time
+		//the second time it will be 0 because we fix it
+		Owner maddie = new Owner();
+        maddie.setId(2);
+        maddie.setFirstName("Maddy");
+        maddie.setLastName("Benjamin");
+        maddie.setAddress("108 Cedarcrest");
+        maddie.setCity("DDO");
+        maddie.setTelephone("5146859221");
+        given(this.owners.findById(2)).willReturn(maddie);
+		this.ownersList.set(1,maddie);
+		given(this.owners.getAllOwners()).willReturn(ownersList);
+		ownerPostgres.consistencyCheck(this.owners);
+		assertEquals(1, ownerPostgres.getInconsistencies());
+		ownerPostgres.consistencyCheck(this.owners);
+		assertEquals(0, ownerPostgres.getInconsistencies());
+        
+		
+		
+		
+		
 	}
 
 }
