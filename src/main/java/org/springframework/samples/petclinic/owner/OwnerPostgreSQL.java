@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import org.springframework.scheduling.annotation.Async;
 
 
 public class OwnerPostgreSQL {
@@ -140,6 +141,7 @@ public class OwnerPostgreSQL {
 		
 	}
 	
+	@Async
 	public void consistencyCheck(OwnerRepository repo) throws SQLException {
 		
 		inconsistencies = 0;
@@ -228,6 +230,7 @@ public class OwnerPostgreSQL {
 
 			index++;
 		}
+	
 	}
 	
 	//print inconsistency

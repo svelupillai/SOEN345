@@ -100,6 +100,7 @@ public class TestMigration {
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
 		
+		
 		// when an owner that exists is updated, there will be an inconsistency
 		Owner maddie = new Owner();
         maddie.setId(2);
