@@ -38,13 +38,13 @@ public class OwnerPostgreSQL {
 	}
 	
 	//adds to DB
-	public void addToDB(Owner owner){
-		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + owner.getId().toString() + ", " 
-				+ "'" + owner.getFirstName() + "', "
-				+ "'" + owner.getLastName() + "', "
-				+ "'" + owner.getAddress() + "', "
-				+ "'" + owner.getCity() + "', "
-				+ "'" + owner.getTelephone().toString()
+	public void addToDB(Owner o){
+		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + o.getId().toString() + ", " 
+				+ "'" + o.getFirstName() + "', "
+				+ "'" + o.getLastName() + "', "
+				+ "'" + o.getAddress() + "', "
+				+ "'" + o.getCity() + "', "
+				+ "'" + o.getTelephone().toString()
 				+"');";
 
 		Statement statement = null;
@@ -58,12 +58,32 @@ public class OwnerPostgreSQL {
 		
 	}
 	
+	//update db
+	public void updateDB(Owner owner){
+		String updateQuery = "UPDATE Owner "
+							+ "SET first_name= " +"'"+ owner.getFirstName() + "', "
+							+ "last_name= " +"'"+ owner.getLastName() + "', "
+							+ "address= " +"'"+ owner.getAddress() + "', "
+							+ "city= " +"'"+ owner.getCity() + "', "
+							+ "telephone= " +"'"+ owner.getTelephone().toString() + "'"
+							+ "WHERE id=" + owner.getId() + ";";
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(updateQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public void consistencyCheck(OwnerRepository repo) throws SQLException {
 		
 		inconsistencies = 0;
 		List<Owner> owners = repo.getAllOwners();
 
-		String sqlStatement = "SELECT * FROM Owner;";
+		String sqlStatement = "SELECT * FROM Owner ORDER BY id;";
 		Statement statement = getConnection().createStatement();
 		ResultSet postgresOwners = statement.executeQuery(sqlStatement);
 
@@ -77,7 +97,6 @@ public class OwnerPostgreSQL {
 		int index = 0;
 
 		while(index < owners.size()) {
-
 			int id = 0;
 			String firstName = null;
 			String lastName = null;
@@ -109,6 +128,31 @@ public class OwnerPostgreSQL {
 			
 			//the old db owner and new db owner are inconsistent
 			else {
+				
+				if(!(owner.getFirstName().equals(firstName))){
+					Inconsistency(owner.getFirstName(), firstName);
+					updateDB(owner);
+				}
+				
+				if(!(owner.getLastName().equals(lastName))){
+					Inconsistency(owner.getLastName(), lastName);
+					updateDB(owner);
+				}
+				
+				if(!(owner.getAddress().equals(address))){
+					Inconsistency(owner.getAddress(), address);
+					updateDB(owner);
+				}
+				
+				if(!(owner.getCity().equals(city))){
+					Inconsistency(owner.getCity(), city);
+					updateDB(owner);
+				}
+				
+				if(!(owner.getTelephone().equals(telephone))){
+					Inconsistency(owner.getTelephone(), telephone);
+					updateDB(owner);
+				}
 			
 			}
 			
