@@ -83,7 +83,7 @@ public class TestMigration {
         person.setCity("Westmount");
         person.setTelephone("5432165995");
         given(this.owners.findById(3)).willReturn(person);
-        ownersList.add(person);
+        ownersList.addTestOnlyOld(person);
         given(this.owners.getAllOwners()).willReturn(ownersList);
 		
 		ownerPostgres.consistencyCheck(this.owners);
@@ -108,6 +108,21 @@ public class TestMigration {
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(1, ownerPostgres.getInconsistencies());
 		ownerPostgres.consistencyCheck(this.owners);
+		assertEquals(0, ownerPostgres.getInconsistencies());
+		
+		
+		//this is the shadow write, it writes both to the old db list and the new one
+		Owner simple = new Owner();
+        simple.setId(4);
+        simple.setFirstName("Simple");
+        simple.setLastName("seep");
+        simple.setAddress("4825 bourett");
+        simple.setCity("Montreal");
+        simple.setTelephone("5147333202");
+        given(this.owners.findById(4)).willReturn(simple);
+        ownersList.add(simple);
+        given(this.owners.getAllOwners()).willReturn(ownersList);
+        ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
         
 		
