@@ -16,6 +16,7 @@ public class OwnerPostgreSQL {
 	}
 	
 	public void forklift(OwnerRepository repo) {
+		//getting all owners in the current db
 		List<Owner> owners = repo.getAllOwners();
 
 		for(Owner  owner : owners) {
@@ -27,6 +28,7 @@ public class OwnerPostgreSQL {
 					+ "'" + owner.getTelephone().toString()
 					+"');";
 
+			//inserting the current owners into the new postgreSQL db
 			Statement statement = null;
 			try {
 				statement = getConnection().createStatement();
@@ -37,7 +39,7 @@ public class OwnerPostgreSQL {
 		}
 	}
 	
-	//adds to DB
+	//adds owner to postgreSQL db
 	public void addToDB(Owner o){
 		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + o.getId().toString() + ", " 
 				+ "'" + o.getFirstName() + "', "
@@ -58,14 +60,74 @@ public class OwnerPostgreSQL {
 		
 	}
 	
-	//update db
-	public void updateDB(Owner owner){
+	//update first name postgreSQL db
+	private void updateFirstName(Owner owner){
 		String updateQuery = "UPDATE Owner "
-							+ "SET first_name= " +"'"+ owner.getFirstName() + "', "
-							+ "last_name= " +"'"+ owner.getLastName() + "', "
-							+ "address= " +"'"+ owner.getAddress() + "', "
-							+ "city= " +"'"+ owner.getCity() + "', "
-							+ "telephone= " +"'"+ owner.getTelephone().toString() + "'"
+							+ "SET first_name= " +"'"+ owner.getFirstName() + "'"
+							+ "WHERE id=" + owner.getId() + ";";
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(updateQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//update last name in postgreSQL db
+	private void updateLastName(Owner owner){
+		String updateQuery = "UPDATE Owner "
+							+ "SET last_name= " +"'"+ owner.getLastName() + "'"
+							+ "WHERE id=" + owner.getId() + ";";
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(updateQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//update address in postgreSQL db
+	private void updateAddress(Owner owner){
+		String updateQuery = "UPDATE Owner "
+							+ "SET address= " +"'"+ owner.getAddress() + "'"
+							+ "WHERE id=" + owner.getId() + ";";
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(updateQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//update city in postgreSQL db
+	private void updateCity(Owner owner){
+		String updateQuery = "UPDATE Owner "
+							+ "SET city= " +"'"+ owner.getCity() + "'"
+							+ "WHERE id=" + owner.getId() + ";";
+		Statement statement = null;
+		try {
+			statement = getConnection().createStatement();
+			statement.executeUpdate(updateQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//update telephone in postgreSQL db
+	private void updateTelephone(Owner owner){
+		String updateQuery = "UPDATE Owner "
+							+ "SET telephone= " +"'"+ owner.getTelephone() + "'"
 							+ "WHERE id=" + owner.getId() + ";";
 		Statement statement = null;
 		try {
@@ -81,12 +143,15 @@ public class OwnerPostgreSQL {
 	public void consistencyCheck(OwnerRepository repo) throws SQLException {
 		
 		inconsistencies = 0;
+		//all current owners
 		List<Owner> owners = repo.getAllOwners();
-
+		
+		//all owners in postgreSQL db
 		String sqlStatement = "SELECT * FROM Owner ORDER BY id;";
 		Statement statement = getConnection().createStatement();
 		ResultSet postgresOwners = statement.executeQuery(sqlStatement);
-
+		
+		//gets the column number
 		int idColumn = postgresOwners.findColumn("id");
 		int firstNameColumn = postgresOwners.findColumn("first_name");
 		int lastNameColumn = postgresOwners.findColumn("last_name");
@@ -103,7 +168,9 @@ public class OwnerPostgreSQL {
 			String address = null;
 			String city = null;
 			String telephone = null;
-
+			
+			//pointer starts off on the row above the first one
+			//if row exists, get the value according to the column number
 			if(postgresOwners.next()) {
 				id = (int) postgresOwners.getObject(idColumn);
 				firstName = (String) postgresOwners.getObject(firstNameColumn);
@@ -112,10 +179,11 @@ public class OwnerPostgreSQL {
 				city = (String) postgresOwners.getObject(cityColumn);
 				telephone = (String) postgresOwners.getObject(telephoneColumn);
 			}
-
+			
+			//owner in current db
 			Owner owner = owners.get(index);
 			
-			//this owner is not in the postgres db
+			//this owner is not in the postgreSQL db but it is in the old db
 			if(id == 0 && firstName == null && lastName ==null &&  address ==null && address == null && city == null && telephone ==null){
 				Inconsistency(owner.getId(), id);
 				Inconsistency(owner.getFirstName(), firstName);
@@ -127,31 +195,32 @@ public class OwnerPostgreSQL {
 			}
 			
 			//the old db owner and new db owner are inconsistent
+			//update postgreSQL with values of old db
 			else {
 				
 				if(!(owner.getFirstName().equals(firstName))){
 					Inconsistency(owner.getFirstName(), firstName);
-					updateDB(owner);
+					updateFirstName(owner);
 				}
 				
 				if(!(owner.getLastName().equals(lastName))){
 					Inconsistency(owner.getLastName(), lastName);
-					updateDB(owner);
+					updateLastName(owner);
 				}
 				
 				if(!(owner.getAddress().equals(address))){
 					Inconsistency(owner.getAddress(), address);
-					updateDB(owner);
+					updateAddress(owner);
 				}
 				
 				if(!(owner.getCity().equals(city))){
 					Inconsistency(owner.getCity(), city);
-					updateDB(owner);
+					updateCity(owner);
 				}
 				
 				if(!(owner.getTelephone().equals(telephone))){
 					Inconsistency(owner.getTelephone(), telephone);
-					updateDB(owner);
+					updateTelephone(owner);
 				}
 			
 			}
@@ -161,6 +230,7 @@ public class OwnerPostgreSQL {
 		}
 	}
 	
+	//print inconsistency
 	private void Inconsistency(Object expected, Object actual) {
 		System.out.println("\nConsistency Violation!"
 							+ "\n\t Expected: " + expected 
