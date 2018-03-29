@@ -140,9 +140,43 @@ public class TestMigration {
         ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
         
+		// **This is the shadow read to ensure that the values are consistent for a specific row/id**
 		
-		
-		
+				//Owner object will be added to both old and new db
+				Owner human = new Owner();
+				human.setId(5);
+				human.setFirstName("Human");
+				human.setLastName("Alien");
+				human.setAddress("5575 Victoria");
+				human.setCity("Montreal");
+				human.setTelephone("5147373455");
+				given(this.owners.findById(5)).willReturn(human);
+				
+				//adds to both dbs
+				ownersList.add(human);
+				given(this.owners.getAllOwners()).willReturn(ownersList);
+				
+				ownerPostgres.shadowRead(this.owners, human.getId());
+				assertEquals(0, ownerPostgres.getReadInconsistencies());
+				
+				// when an owner that exists is updated, there will be an inconsistency
+				Owner georgie = new Owner();
+				georgie.setId(1);
+				georgie.setFirstName("Georgie");
+				georgie.setLastName("Franklin");
+				georgie.setAddress("110 Liberty");
+				georgie.setCity("Madison");
+				georgie.setTelephone("6085551023");
+		        given(this.owners.findById(1)).willReturn(georgie);
+		        this.ownersList.set(1, georgie);
+		        given(this.owners.getAllOwners()).willReturn(ownersList);
+		        
+		        //the first time it will show one consistency
+				ownerPostgres.shadowRead(this.owners, georgie.getId());
+				assertEquals(1, ownerPostgres.getReadInconsistencies());
+				//the second time it will be 0, as the inconsistency will be fixed
+				ownerPostgres.shadowRead(this.owners, georgie.getId());
+				assertEquals(0, ownerPostgres.getReadInconsistencies());
 		
 	}
 

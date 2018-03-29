@@ -12,6 +12,8 @@ public class OwnerPostgreSQL {
 	
 	private int inconsistencies = 0;
 	
+	private int readInconsistencies = 0;
+	
 	public Connection getConnection(){
 		return ConnectToPostgreSQL.connectToDatabase();
 	}
@@ -246,10 +248,84 @@ public class OwnerPostgreSQL {
 		return inconsistencies;
 	}
 	
+	@Async
+	public void shadowRead(OwnerRepository repo, int id) throws SQLException{
+
+		//current owner in old db with the specific id
+		Owner owner = (Owner) repo.findById(id);
+
+		//Owner in postgreSQL db with the specific id
+		String sqlStatement = "SELECT * FROM Owner WHERE id = "+id+" ORDER BY id;";
+		Statement statement = getConnection().createStatement();
+		ResultSet postgresOwner = statement.executeQuery(sqlStatement);
+
+		//get the column number in the postgreSQL db
+		int firstNameColumn = postgresOwner.findColumn("first_name");
+		int lastNameColumn = postgresOwner.findColumn("last_name");
+		int addressColumn = postgresOwner.findColumn("address");
+		int cityColumn = postgresOwner.findColumn("city");
+		int telephoneColumn = postgresOwner.findColumn("telephone");
+
+		//get the value according to the column number
+		String firstName = null;
+		String lastName = null;
+		String address = null;
+		String city = null;
+		String telephone = null;
+
+		//if row exists, get the value according to the column number
+		if(postgresOwner.next()) {
+			firstName = (String) postgresOwner.getObject(firstNameColumn);
+			lastName = (String) postgresOwner.getObject(lastNameColumn);
+			address = (String) postgresOwner.getObject(addressColumn);
+			city = (String) postgresOwner.getObject(cityColumn);
+			telephone = (String) postgresOwner.getObject(telephoneColumn);
+		}
+
+		//check if the old db owner and the postgreSQL db owner have same values
+		//if inconsistent, update the postgreSQL with values of old db
+		if(!(owner.getFirstName().equals(firstName))){
+			ReadInconsistency(owner.getFirstName(), firstName);
+			updateFirstName(owner);
+		}
+
+		if(!(owner.getLastName().equals(lastName))){
+			ReadInconsistency(owner.getLastName(), lastName);
+			updateLastName(owner);
+		}
+
+		if(!(owner.getAddress().equals(address))){
+			ReadInconsistency(owner.getAddress(), address);
+			updateAddress(owner);
+		}
+
+		if(!(owner.getCity().equals(city))){
+			ReadInconsistency(owner.getCity(), city);
+			updateCity(owner);
+		}
+
+		if(!(owner.getTelephone().equals(telephone))){
+			ReadInconsistency(owner.getTelephone(), telephone);
+			updateTelephone(owner);
+		}
+	}
+
+	//print read inconsistency
+	private void ReadInconsistency(Object expected, Object actual) {
+		System.out.println("\nRead Consistency Violation!"
+				+ "\n\t Expected: " + expected 
+				+ "\n\t Actual: " + actual);
+
+		readInconsistencies++;
+	}
+	
+	public int getReadInconsistencies() {
+		return readInconsistencies;
+	}
+	
 	public void dropTable() throws SQLException {
 		String sqlDropTableQuery = "DROP TABLE Owner;";
 		Statement statement = getConnection().createStatement();
 		statement.executeUpdate(sqlDropTableQuery);
 	}
-
 }
