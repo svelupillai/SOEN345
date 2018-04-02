@@ -333,6 +333,10 @@ public class OwnerPostgreSQL {
 		return readInconsistencies;
 	}
 
+	public int getTotalInconsistencies() {
+	    return totalInconsistencies;
+    }
+
 	public void dropTable() throws SQLException {
 		String sqlDropTableQuery = "DROP TABLE Owner;";
 		Statement statement = getConnection().createStatement();

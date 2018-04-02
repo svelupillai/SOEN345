@@ -26,7 +26,7 @@ public class ConnectToPostgreSQL {
 	public static Connection connectToDatabase() {
 		try {
 			Class.forName("org.postgresql.Driver");
-		} 
+		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return null;
@@ -38,7 +38,7 @@ public class ConnectToPostgreSQL {
 					"jdbc:postgresql://127.0.0.1:5432/petclinic", "postgres", "soen");
 
 			createOwnerTable();
-		} 
+		}
 		catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();

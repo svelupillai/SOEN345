@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 @SuppressWarnings({ "hiding", "serial" })
 public class PostgresList<E> extends ArrayList<E> {
-	
+
 	private OwnerPostgreSQL postgresOwner;
-	
+
 	public PostgresList(){
 		postgresOwner = new OwnerPostgreSQL();
 	}
@@ -19,12 +19,17 @@ public class PostgresList<E> extends ArrayList<E> {
 		postgresOwner.addToDB((Owner) e);
 		return true;
 	}
-	
+
 	//this is for testing purposes only
 	//will add the object only to old db
 	public boolean addTestOnlyOld(E e) {
 		return super.add(e);
 	}
+
+	public boolean addTestOnlyNew(E e) {
+	    postgresOwner.addToDB((Owner) e);
+	    return true;
+    }
 
 
 }
