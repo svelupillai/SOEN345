@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.scheduling.annotation.Async;
@@ -210,6 +211,7 @@ public class OwnerPostgreSQL {
 
 			//this owner is not in the postgreSQL db but it is in the old db
 			if(id == 0 && firstName == null && lastName ==null &&  address ==null && address == null && city == null && telephone ==null){
+				int ownerId = owner.getId();
 				Inconsistency(owner.getId(), id);
 				Inconsistency(owner.getFirstName(), firstName);
 				Inconsistency(owner.getLastName(), lastName);
@@ -217,39 +219,56 @@ public class OwnerPostgreSQL {
 				Inconsistency(owner.getCity(), city);
 				Inconsistency(owner.getTelephone(), telephone);
 				addToDB(owner);
+				inconsistenciesHashMap.put(ownerId, new ArrayList<String>() {{add("Id");
+																			  add("FirstName");
+																			  add("LastName");
+																			  add("Address");
+																			  add("City");
+																			  add("Telephone");
+																			  }});
 			}
 
 			//the old db owner and new db owner are inconsistent
 			//update postgreSQL with values of old db
 			else {
-
+				int ownerId = owner.getId();
+				List<String> columns = new ArrayList<String>();
 				if(!(owner.getFirstName().equals(firstName))){
+					columns.add("FirstName");
 					Inconsistency(owner.getFirstName(), firstName);
+					inconsistenciesHashMap.put(ownerId, columns);
 					updateFirstName(owner);
 				}
 
 				if(!(owner.getLastName().equals(lastName))){
+					columns.add("LastName");
 					Inconsistency(owner.getLastName(), lastName);
+					inconsistenciesHashMap.put(ownerId, columns);
 					updateLastName(owner);
 				}
 
 				if(!(owner.getAddress().equals(address))){
+					columns.add("Address");
 					Inconsistency(owner.getAddress(), address);
+					inconsistenciesHashMap.put(ownerId, columns);
 					updateAddress(owner);
 				}
 
 				if(!(owner.getCity().equals(city))){
+					columns.add("City");
 					Inconsistency(owner.getCity(), city);
+					inconsistenciesHashMap.put(ownerId, columns);
 					updateCity(owner);
 				}
 
 				if(!(owner.getTelephone().equals(telephone))){
+					columns.add("Telephone");
 					Inconsistency(owner.getTelephone(), telephone);
+					inconsistenciesHashMap.put(ownerId, columns);
 					updateTelephone(owner);
 				}
 
 			}
-
 
 			index++;
 		}
@@ -307,28 +326,40 @@ public class OwnerPostgreSQL {
 
 		//check if the old db owner and the postgreSQL db owner have same values
 		//if inconsistent, update the postgreSQL with values of old db
+		int ownerId = owner.getId();
+		List<String> columns = new ArrayList<String>();
 		if(!(owner.getFirstName().equals(firstName))){
+			columns.add("FirstName");
 			ReadInconsistency(owner.getFirstName(), firstName);
+			readInconsistenciesHashMap.put(ownerId, columns);
 			updateFirstName(owner);
 		}
 
 		if(!(owner.getLastName().equals(lastName))){
+			columns.add("LastName");
 			ReadInconsistency(owner.getLastName(), lastName);
+			readInconsistenciesHashMap.put(ownerId, columns);
 			updateLastName(owner);
 		}
 
 		if(!(owner.getAddress().equals(address))){
+			columns.add("Address");
 			ReadInconsistency(owner.getAddress(), address);
+			readInconsistenciesHashMap.put(ownerId, columns);
 			updateAddress(owner);
 		}
 
 		if(!(owner.getCity().equals(city))){
+			columns.add("City");
 			ReadInconsistency(owner.getCity(), city);
+			readInconsistenciesHashMap.put(ownerId, columns);
 			updateCity(owner);
 		}
 
 		if(!(owner.getTelephone().equals(telephone))){
+			columns.add("Telephone");
 			ReadInconsistency(owner.getTelephone(), telephone);
+			readInconsistenciesHashMap.put(ownerId, columns);
 			updateTelephone(owner);
 		}
 	}
