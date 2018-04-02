@@ -203,4 +203,40 @@ public class TestMigration {
 
 	}
 
+	@Test
+	public void testCallOnlyNewDBWhenPastAThreshold() throws SQLException {
+	    int i = 0;
+        OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
+        ownerPostgres.dropTable();
+        ownerPostgres.restTotalInconsistencies();
+        PostgresList<Owner> ownersList = new PostgresList<Owner>();
+        while(i<5) {
+            Owner ow = new Owner();
+            ow.setId(i);
+            ow.setFirstName("John" );
+            ow.setLastName("Tabla");
+            ow.setTelephone("123");
+            ow.setAddress("5045");
+            ow.setCity("Mtl");
+	        ownersList.add(ow); //adds to both
+            given(this.owners.getAllOwners()).willReturn(ownersList);
+            ownerPostgres.consistencyCheck(this.owners);
+	        i++;
+        }
+
+        if (ownerPostgres.getTotalInconsistencies() == 0) { // if 100% success rate then only add to new datastore(postgres)
+            Owner o = new Owner();
+            o.setFirstName("Cassandra");
+            o.setLastName("Tabla");
+            o.setId(100);
+            o.setTelephone("598");
+            o.setAddress("5045");
+            o.setCity("Mtl");
+            ownersList.addTestOnlyNew(o);
+
+            Owner ownerInOldDb = (Owner)this.owners.findById(100);
+            assertNull(ownerInOldDb);
+        }
+
+    }
 }

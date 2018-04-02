@@ -36,6 +36,8 @@ public class OwnerPostgreSQL {
 		return readInconsistenciesHashMap;
 	}
 
+	private int totalInconsistencies = 0;
+
 	public Connection getConnection(){
 		return ConnectToPostgreSQL.connectToDatabase();
 	}
@@ -45,7 +47,7 @@ public class OwnerPostgreSQL {
 		List<Owner> owners = repo.getAllOwners();
 
 		for(Owner  owner : owners) {
-			String forkliftQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + owner.getId().toString() + ", " 
+			String forkliftQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + owner.getId().toString() + ", "
 					+ "'" + owner.getFirstName() + "', "
 					+ "'" + owner.getLastName() + "', "
 					+ "'" + owner.getAddress() + "', "
@@ -66,7 +68,7 @@ public class OwnerPostgreSQL {
 
 	//adds owner to postgreSQL db
 	public void addToDB(Owner o){
-		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + o.getId().toString() + ", " 
+		String addQuery = "INSERT INTO Owner (id, first_name, last_name, address, city, telephone) VALUES (" + o.getId().toString() + ", "
 				+ "'" + o.getFirstName() + "', "
 				+ "'" + o.getLastName() + "', "
 				+ "'" + o.getAddress() + "', "
@@ -81,7 +83,7 @@ public class OwnerPostgreSQL {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}	
+		}
 
 	}
 
@@ -219,6 +221,8 @@ public class OwnerPostgreSQL {
 				Inconsistency(owner.getCity(), city);
 				Inconsistency(owner.getTelephone(), telephone);
 				addToDB(owner);
+				totalInconsistencies++;
+
 				inconsistenciesHashMap.put(ownerId, new ArrayList<String>() {{add("Id");
 																			  add("FirstName");
 																			  add("LastName");
@@ -238,6 +242,7 @@ public class OwnerPostgreSQL {
 					Inconsistency(owner.getFirstName(), firstName);
 					inconsistenciesHashMap.put(ownerId, columns);
 					updateFirstName(owner);
+					totalInconsistencies++;
 				}
 
 				if(!(owner.getLastName().equals(lastName))){
@@ -245,6 +250,7 @@ public class OwnerPostgreSQL {
 					Inconsistency(owner.getLastName(), lastName);
 					inconsistenciesHashMap.put(ownerId, columns);
 					updateLastName(owner);
+					totalInconsistencies++;
 				}
 
 				if(!(owner.getAddress().equals(address))){
@@ -252,6 +258,7 @@ public class OwnerPostgreSQL {
 					Inconsistency(owner.getAddress(), address);
 					inconsistenciesHashMap.put(ownerId, columns);
 					updateAddress(owner);
+					totalInconsistencies++;
 				}
 
 				if(!(owner.getCity().equals(city))){
@@ -259,6 +266,7 @@ public class OwnerPostgreSQL {
 					Inconsistency(owner.getCity(), city);
 					inconsistenciesHashMap.put(ownerId, columns);
 					updateCity(owner);
+					totalInconsistencies++;
 				}
 
 				if(!(owner.getTelephone().equals(telephone))){
@@ -266,6 +274,7 @@ public class OwnerPostgreSQL {
 					Inconsistency(owner.getTelephone(), telephone);
 					inconsistenciesHashMap.put(ownerId, columns);
 					updateTelephone(owner);
+					totalInconsistencies++;
 				}
 
 			}
@@ -278,7 +287,7 @@ public class OwnerPostgreSQL {
 	//print inconsistency
 	private void Inconsistency(Object expected, Object actual) {
 		System.out.println("\nConsistency Violation!"
-				+ "\n\t Expected: " + expected 
+				+ "\n\t Expected: " + expected
 				+ "\n\t Actual: " + actual);
 
 		inconsistencies++;
@@ -367,7 +376,7 @@ public class OwnerPostgreSQL {
 	//print read inconsistency
 	private void ReadInconsistency(Object expected, Object actual) {
 		System.out.println("\nRead Consistency Violation!"
-				+ "\n\t Expected: " + expected 
+				+ "\n\t Expected: " + expected
 				+ "\n\t Actual: " + actual);
 
 		readInconsistencies++;
@@ -375,6 +384,14 @@ public class OwnerPostgreSQL {
 
 	public int getReadInconsistencies() {
 		return readInconsistencies;
+	}
+
+	public int getTotalInconsistencies() {
+	    return totalInconsistencies;
+    }
+
+    public void restTotalInconsistencies() {
+	    totalInconsistencies = 0;
 	}
 
 	public void dropTable() throws SQLException {
