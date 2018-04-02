@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.After;
@@ -60,6 +62,8 @@ public class TestMigration {
 		//drop exisitng new db so that we do not get primary key violations
 		OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
 		ownerPostgres.dropTable();
+		ownerPostgres.resetInconsistenciesHash();
+		ownerPostgres.resetReadInconsistenciesHash();
 
 		//forklist the data
 		ownerPostgres.forklift(this.owners);
@@ -67,6 +71,9 @@ public class TestMigration {
 		//check that there are no inconsistencies
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
+		
+		//check that nothing is added to hash
+		assertEquals(new HashMap<Integer, List<String>>(), ownerPostgres.getInconsistenciesHash());
 	}
 
 	@Test
@@ -75,6 +82,8 @@ public class TestMigration {
 		//drop exisitng new db so that we do not get primary key violations
 		OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
 		ownerPostgres.dropTable();
+		ownerPostgres.resetInconsistenciesHash();
+		ownerPostgres.resetReadInconsistenciesHash();
 
 		//forklift the data
 		ownerPostgres.forklift(this.owners);
@@ -96,10 +105,18 @@ public class TestMigration {
 		//all fields in the person object will be inconsistent because it is not in the new db
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(6, ownerPostgres.getInconsistencies());
+		//ensure inconsistency was added to the hash
+		List<String> columns = new ArrayList<String>() {{add("Id");
+		  												 add("FirstName");
+		  												 add("LastName");
+			  											 add("Address");
+			  											 add("City");
+		  												 add("Telephone");
+		  												 }};
+		assertEquals(columns, ownerPostgres.getInconsistenciesHash().get(3));
 		//second time around will be 0, since it was fixed before
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
-
 
 		// when an owner that exists is updated, there will be an inconsistency
 		Owner maddie = new Owner();
@@ -116,6 +133,9 @@ public class TestMigration {
 		//the first time it will show one inconsistency
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(1, ownerPostgres.getInconsistencies());
+		//ensure inconsistency was added to the hash
+		columns = new ArrayList<String>() {{ add("FirstName"); }};
+		assertEquals(columns, ownerPostgres.getInconsistenciesHash().get(2));
 		//the second time it will be 0, since the consistency checker fixes it
 		ownerPostgres.consistencyCheck(this.owners);
 		assertEquals(0, ownerPostgres.getInconsistencies());
@@ -174,6 +194,9 @@ public class TestMigration {
 		//the first time it will show one consistency
 		ownerPostgres.shadowRead(this.owners, georgie.getId());
 		assertEquals(1, ownerPostgres.getReadInconsistencies());
+		//ensure inconsistency was added to the hash
+		columns = new ArrayList<String>() {{ add("FirstName"); }};
+		assertEquals(columns, ownerPostgres.getReadInconsistenciesHash().get(1));
 		//the second time it will be 0, as the inconsistency will be fixed
 		ownerPostgres.shadowRead(this.owners, georgie.getId());
 		assertEquals(0, ownerPostgres.getReadInconsistencies());
