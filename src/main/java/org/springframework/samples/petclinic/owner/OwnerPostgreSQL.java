@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.scheduling.annotation.Async;
 
@@ -13,6 +14,26 @@ public class OwnerPostgreSQL {
 	private int inconsistencies = 0;
 
 	private int readInconsistencies = 0;
+	
+	private HashMap<Integer, List<String>> inconsistenciesHashMap = new HashMap<>();
+	
+	private HashMap<Integer, List<String>> readInconsistenciesHashMap = new HashMap<>();
+	
+	public void resetInconsistenciesHash() {
+		inconsistenciesHashMap = new HashMap<>();
+	}
+	
+	public void resetReadInconsistenciesHash() {
+		readInconsistenciesHashMap = new HashMap<>();
+	}
+	
+	public HashMap<Integer, List<String>> getInconsistenciesHash(){
+		return inconsistenciesHashMap;
+	}
+	
+	public HashMap<Integer, List<String>> getReadInconsistenciesHash(){
+		return readInconsistenciesHashMap;
+	}
 
 	public Connection getConnection(){
 		return ConnectToPostgreSQL.connectToDatabase();
