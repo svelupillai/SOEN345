@@ -35,10 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface OwnerRepository extends Repository<Owner, Integer> {
 
-	@Query("SELECT * FROM Owner")
-	@Transactional(readOnly = true)
-	List<Owner> getAllOwners();
-	
     /**
      * Retrieve {@link Owner}s from the data store by last name, returning all owners
      * whose last name <i>starts</i> with the given name.
@@ -65,5 +61,7 @@ public interface OwnerRepository extends Repository<Owner, Integer> {
      */
     void save(Owner owner);
 
-
+    @Query("SELECT o FROM Owner o")
+    @Transactional(readOnly = true)
+    List<Owner> getAllOwners();
 }
