@@ -208,7 +208,7 @@ public class TestMigration {
 	    int i = 0;
         OwnerPostgreSQL ownerPostgres = new OwnerPostgreSQL();
         ownerPostgres.dropTable();
-        ownerPostgres.restTotalInconsistencies();
+        ownerPostgres.resetTotalInconsistencies();
         PostgresList<Owner> ownersList = new PostgresList<Owner>();
         while(i<5) {
             Owner ow = new Owner();

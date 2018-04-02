@@ -390,7 +390,7 @@ public class OwnerPostgreSQL {
 	    return totalInconsistencies;
     }
 
-    public void restTotalInconsistencies() {
+    public void resetTotalInconsistencies() {
 	    totalInconsistencies = 0;
 	}
 
